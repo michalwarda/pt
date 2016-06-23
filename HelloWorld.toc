@@ -1,0 +1,7 @@
+## Interface: 60200
+## Title: Hello World
+## Notes: Hello World
+## Version: 1.0
+HelloWorld.lua
+HelloWorld.xml
+# comment
