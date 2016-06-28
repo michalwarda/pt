@@ -1,3 +1,13 @@
+table.filter = function(t, filterIter)
+  local out = {}
+
+  for k, v in pairs(t) do
+    if filterIter(v, k, t) then out[k] = v end
+  end
+
+  return out
+end
+
 function deepcopy(orig)
   local orig_type = type(orig)
   local copy

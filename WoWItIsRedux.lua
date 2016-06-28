@@ -1,6 +1,14 @@
 states = {};
 currentStateIndex = 1;
-states[currentStateIndex] = {state = {inputText = "", items = {{text = "Item 1", checked = true}, {text = "Item 2", checked = false},}}, action = {type = "INIT"}};
+states[currentStateIndex] = {
+  state = {
+    inputText = "",
+    items = {{text = "Item 1", checked = true}, {text = "Item 2", checked = false}},
+    hidden = false,
+    filterChecked = false
+  }, action = {type = "INIT"}
+};
+
 timeTraveling = false;
 tt = true;
 

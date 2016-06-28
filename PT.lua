@@ -8,6 +8,7 @@ state = {
     {text = "Item 2", checked = false},
   },
   hidden = false,
+  filterChecked = false,
 };
 
 -----------------
@@ -22,6 +23,7 @@ function reduce(state, action)
     addItem = function() table.insert(newState.items, ({text = action.text, checked = false})) end,
     removeItem = function() table.remove(newState.items, action.index) end,
     toggleHidden = function() newState.hidden = not newState.hidden end,
+    toggleFilter = function() newState.filterChecked = not newState.filterChecked end,
   }
   actions[action.type]();
 
@@ -79,13 +81,28 @@ function render(state)
     dispatch({type = "addItem", text = self:GetText()});
     dispatch({type = "updateInput", text = ""});
   end
+
+  function displayedItems()
+    if state.filterChecked then
+      return table.filter(state.items, function(item) return item.checked end)
+    else
+      return state.items;
+    end
+  end
+
+  function toggleFilter()
+    dispatch({type = "toggleFilter"});
+  end
+
   return {
     Div({Size = {300, 360}, Point = {"CENTER", 0, 0}, Hidden = state.hidden, Children = {
       Text({Text = "WoW TodoMVC", UIParent = "TitleBg", Point = {"LEFT", 10, 5}}),
       Input({Size = {250, 30}, Text = state.inputText, Point = {"TOPLEFT", 15, -20}, UIParent = "Bg",
         Scripts = {OnChar = OnChar, OnEnterPressed = OnEnterPressed}}),
       Text({Text = "What needs to be done?", Point = {"TOPLEFT", 10, -10}, UIParent = "Bg"}),
-      Items(state.items),
+      Items(displayedItems()),
+      CheckBox({Size = {30, 30}, Checked = state.filterChecked, Scripts = {PostClick = toggleFilter}, Point = {"BOTTOMLEFT", 10, 10}}),
+      Text({Text = "Filter Checked Items", Point = {"BOTTOMLEFT", 50, 30}}),
     }}, "BasicFrameTemplateWithInset"),
     TimeTravel(),
   }
