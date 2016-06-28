@@ -6,7 +6,7 @@ function Component(name, props, template)
 
   -- SET PROPS
   for property, value in pairs(props) do
-    if property ~= "Children" and property ~= "Scripts" and property ~= "Parent" and property ~= "UIParent" and property ~= "Point" and property ~= "Root" then
+    if property ~= "Children" and property ~= "Scripts" and property ~= "Parent" and property ~= "UIParent" and property ~= "Point" and property ~= "Root" and property ~= "Hidden" then
       if type(value) == "table" then
         component['Set' .. property](component, unpack(value));
       else
@@ -22,8 +22,12 @@ function Component(name, props, template)
     end
   end
 
+  if props.Hidden then
+    component:Hide();
+  end
+
   -- SET PARENT
-  if props.Root == true then
+  if props.Root then
     component:SetParent(UIParent);
     component:SetPoint(unpack(props.Point));
   end
@@ -46,6 +50,10 @@ function Component(name, props, template)
 end
 
 -- COMPONENTS
+function Root(props, template)
+  props.Root = true;
+  return Component("Frame", props, template);
+end
 
 function Div(props, template)
   return Component("Frame", props, template);
@@ -78,5 +86,6 @@ container = nil;
 
 function renderView(state)
   if container ~= nil then container:Hide(); end
-  container = render(getState());
+  local content = render(getState());
+  container = Root({Size = {1, 1}, Point = {"CENTER", 0, 0}, Children = content});
 end

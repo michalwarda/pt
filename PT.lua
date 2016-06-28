@@ -6,7 +6,8 @@ state = {
   items = {
     {text = "Item 1", checked = true},
     {text = "Item 2", checked = false},
-  }
+  },
+  hidden = false,
 };
 
 -----------------
@@ -20,6 +21,7 @@ function reduce(state, action)
     updateItemChecked = function() newState.items[action.index].checked = action.checked end,
     addItem = function() table.insert(newState.items, ({text = action.text, checked = false})) end,
     removeItem = function() table.remove(newState.items, action.index) end,
+    toggleHidden = function() newState.hidden = not newState.hidden end,
   }
   actions[action.type]();
 
@@ -46,21 +48,9 @@ function Item(item, index)
     Size = {280, 30},
     Point = {"TOPLEFT", 0, -((index - 1) * 30)},
     Children = {
-      CheckBox({
-          Size = {30, 30},
-          Checked = item.checked,
-          Scripts = {PostClick = OnCheck},
-          Point = {"LEFT", 0, 0}}),
-      Input({
-          Size = {180, 30},
-          Scripts = {OnChar = OnChar},
-          Text = item.text,
-          Point = {"LEFT", 40, 0}}),
-      Button({
-          Size = {30, 30},
-          Text = "X",
-          Scripts = {PostClick = OnDelete},
-          Point = {"LEFT", 225, 0}})
+      CheckBox({Size = {30, 30}, Checked = item.checked, Scripts = {PostClick = OnCheck}, Point = {"LEFT", 0, 0}}),
+      Input({Size = {180, 30}, Scripts = {OnChar = OnChar}, Text = item.text, Point = {"LEFT", 40, 0}}),
+      Button({Size = {30, 30}, Text = "X", Scripts = {PostClick = OnDelete}, Point = {"LEFT", 225, 0}})
     }
   })
 end
@@ -89,15 +79,29 @@ function render(state)
     dispatch({type = "addItem", text = self:GetText()});
     dispatch({type = "updateInput", text = ""});
   end
-
-  return Div({Root = true, Size = {300, 360}, Point = {"CENTER", 0, 0}, Children = {
-    Text({Text = "WoW TodoMVC", UIParent = "TitleBg", Point = {"LEFT", 10, 5}}),
-    Input({Size = {250, 30}, Text = state.inputText, Point = {"TOPLEFT", 15, -20}, UIParent = "Bg",
-      Scripts = {OnChar = OnChar, OnEnterPressed = OnEnterPressed}}),
-    Text({Text = "What needs to be done?", Point = {"TOPLEFT", 10, -10}, UIParent = "Bg"}),
-    Items(state.items),
-  }}, "BasicFrameTemplateWithInset")
+  return {
+    Div({Size = {300, 360}, Point = {"CENTER", 0, 0}, Hidden = state.hidden, Children = {
+      Text({Text = "WoW TodoMVC", UIParent = "TitleBg", Point = {"LEFT", 10, 5}}),
+      Input({Size = {250, 30}, Text = state.inputText, Point = {"TOPLEFT", 15, -20}, UIParent = "Bg",
+        Scripts = {OnChar = OnChar, OnEnterPressed = OnEnterPressed}}),
+      Text({Text = "What needs to be done?", Point = {"TOPLEFT", 10, -10}, UIParent = "Bg"}),
+      Items(state.items),
+    }}, "BasicFrameTemplateWithInset"),
+    TimeTravel(),
+  }
 end
 
+-----------------
 -- First Render
+-----------------
 renderView();
+
+-----------------
+-- Slash CMD
+-----------------
+SLASH_TODO1 = '/todo';
+local function handler(msg, editbox)
+  dispatch({type = "toggleHidden"});
+end
+
+SlashCmdList["TODO"] = handler;
