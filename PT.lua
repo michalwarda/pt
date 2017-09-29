@@ -3,10 +3,7 @@
 -----------------
 state = {
   inputText = "",
-  items = {
-    {text = "Item 1", checked = true},
-    {text = "Item 2", checked = false},
-  },
+  items = {},
   hidden = false,
   filterChecked = false,
 };
@@ -14,6 +11,7 @@ state = {
 -----------------
 -- Reducer
 -----------------
+
 function reduce(state, action)
   local newState = deepcopy(state);
   local actions = {
@@ -122,3 +120,17 @@ local function handler(msg, editbox)
 end
 
 SlashCmdList["TODO"] = handler;
+
+dispatch({type = "addItem", text = "Find Inspiration"})
+dispatch({type = "addItem", text = "Get Fame!"})
+dispatch({type = "updateItemChecked", index = 1, checked = true})
+dispatch({type = "addItem", text = "Do something interesting in React"})
+dispatch({type = "addItem", text = "Run React In WoW (in Lua)"})
+dispatch({type = "updateItemText", index = 4, text = "Create React in WoW (in Lua)"})
+dispatch({type = "addItem", text = "Create a TodoMVC in WoW it is React!"})
+dispatch({type = "updateItemChecked", index = 3, checked = true})
+dispatch({type = "updateItemChecked", index = 4, checked = true})
+dispatch({type = "addItem", text = "Do weird stuff!"})
+dispatch({type = "addItem", text = "Thank you very much!"})
+goBack()
+goBack()
